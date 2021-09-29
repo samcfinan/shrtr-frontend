@@ -1,3 +1,4 @@
+import validator from "validator";
 import { Component, createResource, createSignal } from "solid-js";
 
 enum Modes {
@@ -8,8 +9,25 @@ enum Modes {
 const Input: Component<{ setResult: (data: string) => string }> = (props) => {
   const [originalUrl, setOriginalUrl] = createSignal<string>();
   const [type, setType] = createSignal(Modes.IDENTIFIABLE);
+  const [urlError, setURLError] = createSignal(false);
+
+  const updateURL = (url: string) => {
+    validateURL(url);
+    setOriginalUrl(url);
+  };
+
+  const validateURL = (value: string) => {
+    if (!validator.isURL(value)) {
+      setURLError(true);
+    } else {
+      setURLError(false);
+    }
+  };
 
   const requestURL = async () => {
+    if (urlError()) {
+      return;
+    }
     const requestBody = {
       url: originalUrl(),
       mode: type(),
@@ -66,12 +84,15 @@ const Input: Component<{ setResult: (data: string) => string }> = (props) => {
             <input
               id="url"
               name="url"
-              type="text"
+              type="url"
               required
               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               placeholder="https://my-example-domain.tld"
-              onInput={(e) => setOriginalUrl(e.currentTarget.value)}
+              onInput={(e) => updateURL(e.currentTarget.value)}
             />
+            {urlError() && (
+              <span class="text-red-600">The URL provided is invalid</span>
+            )}
           </div>
         </div>
 
@@ -79,6 +100,7 @@ const Input: Component<{ setResult: (data: string) => string }> = (props) => {
           <button
             type="submit"
             class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            disabled={urlError()}
             onClick={() => requestURL()}
           >
             <span class="absolute left-0 inset-y-0 flex items-center pl-3">
