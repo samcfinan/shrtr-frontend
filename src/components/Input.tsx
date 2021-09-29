@@ -1,13 +1,22 @@
 import { Component, createSignal } from "solid-js";
+import axios from "axios";
 
 enum Modes {
   RANDOM = "random",
   IDENTIFIABLE = "identifiable",
 }
 
-const Input: Component = () => {
-  const [originalUrl, setOriginalUrl] = createSignal("");
+const Input: Component = (props) => {
+  const [originalUrl, setOriginalUrl] = createSignal<string>();
   const [type, setType] = createSignal("identifiable");
+
+  const requestURL = async () => {
+    const res = await axios.post(`https://api.shrtr.cloud/generate`, {
+      url: originalUrl(),
+      mode: type(),
+    });
+    console.log(res);
+  };
 
   return (
     <div class="max-w-md w-full space-y-8">
@@ -66,7 +75,7 @@ const Input: Component = () => {
           <button
             type="submit"
             class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            onClick={() => console.log(`${type()}   ${originalUrl()}`)}
+            onClick={() => requestURL()}
           >
             <span class="absolute left-0 inset-y-0 flex items-center pl-3">
               <svg
