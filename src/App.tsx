@@ -7,8 +7,9 @@ import Input from "./components/Input";
 const App: Component = () => {
   return (
     <div>
-      <div class="flex flex-col justify-center"></div>
-      <Input />
+      <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <Input />
+      </div>
     </div>
   );
 };
