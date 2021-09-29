@@ -1,21 +1,26 @@
-import { Component, createSignal } from "solid-js";
-import axios from "axios";
+import { Component, createResource, createSignal } from "solid-js";
 
 enum Modes {
   RANDOM = "random",
   IDENTIFIABLE = "identifiable",
 }
 
-const Input: Component = (props) => {
+const Input: Component<{ setResult: (data: string) => string }> = (props) => {
   const [originalUrl, setOriginalUrl] = createSignal<string>();
-  const [type, setType] = createSignal("identifiable");
+  const [type, setType] = createSignal(Modes.IDENTIFIABLE);
 
   const requestURL = async () => {
-    const res = await axios.post(`https://api.shrtr.cloud/generate`, {
+    const requestBody = {
       url: originalUrl(),
       mode: type(),
+    };
+    const res = await fetch("https://api.shrtr.cloud/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody),
     });
-    console.log(res);
+    const data = await res.json();
+    props.setResult(data.shortenedURL);
   };
 
   return (
@@ -36,7 +41,7 @@ const Input: Component = (props) => {
                 name="urlType"
                 value="identifiable"
                 checked={type() === Modes.IDENTIFIABLE}
-                onInput={(e) => setType(e.currentTarget.value)}
+                onInput={() => setType(Modes.IDENTIFIABLE)}
               />
               <span class="ml-2">Identifiable</span>
             </label>
@@ -47,16 +52,15 @@ const Input: Component = (props) => {
                 name="urlType"
                 value="random"
                 checked={type() === Modes.RANDOM}
-                onInput={(e) => setType(e.currentTarget.value)}
+                onInput={() => setType(Modes.RANDOM)}
               />
               <span class="ml-2">Random</span>
             </label>
           </div>
         </div>
-        <input type="hidden" name="remember" value="true" />
         <div class="rounded-md shadow-sm -space-y-px">
           <div>
-            <label for="email-address" class="sr-only">
+            <label for="url" class="sr-only">
               URL
             </label>
             <input
@@ -92,9 +96,8 @@ const Input: Component = (props) => {
                 />
               </svg>
             </span>
-            Generate
+            Generate Short URL
           </button>
-          {type()} {originalUrl()}
         </div>
       </div>
     </div>
