@@ -1,12 +1,14 @@
 import validator from "validator";
-import { Component, createResource, createSignal } from "solid-js";
+import { Component, createSignal } from "solid-js";
 
 enum Modes {
   RANDOM = "random",
   IDENTIFIABLE = "identifiable",
 }
 
-const Input: Component<{ setResult: (data: string) => string }> = (props) => {
+const Input: Component<{ setResult: (data: string | undefined) => void }> = (
+  props
+) => {
   const [originalUrl, setOriginalUrl] = createSignal<string>();
   const [type, setType] = createSignal(Modes.IDENTIFIABLE);
   const [urlError, setURLError] = createSignal(false);

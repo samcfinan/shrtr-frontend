@@ -2,7 +2,7 @@ import { Component, createSignal } from "solid-js";
 
 const Input: Component<{
   result: string | undefined;
-  setResult: (data: string | undefined) => string;
+  setResult: (data: string | undefined) => void;
 }> = (props) => {
   const copyToClipboard = () => {
     if (props.result) {

@@ -1,7 +1,6 @@
 import { Component, createSignal, Show } from "solid-js";
 
 import "tailwindcss/tailwind.css";
-// import styles from "./App.module.css";
 import Input from "./components/Input";
 import Result from "./components/Result";
 
